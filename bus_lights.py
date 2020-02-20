@@ -1,40 +1,30 @@
 #!/usr/bin/env python3
 
 import json
-import urllib.request
+import requests
+import urllib
 
 class get_bus_data(object):
 
     def get_data_from_api(self):
-        url = "http://api.511.org/transit/StopMonitoring?api_key={api-key-ommited}&agency=SF"
-        req = urllib.request.Request(url)
-        response = urllib.request.urlopen(req)
-        data = response.read()
-        values = json.loads(data)
+        r = requests.get('http://api.511.org/transit/StopMonitoring?api_key={omni-api-key}')
+        data = r.json()        
+        
+        for items in data['ServiceDelivery']['StopMonitoringDelivery']['MonitoredStopVisit']:
+            r = requests.get('http://api.511.org/transit/StopMonitoring?api_key={omit-api-key}')
+            #data = json.loads(r.text())
+            data = r.json()
+            r.encoding='utf-8-sig'
+            bus_stop_ref = items['MonitoredVehicleJourney']['DestinationRef']
+            bus_stop_direction = items['MonitoredVehicleJourney']['DirectionRef']
 
-        #print(type(values['ServiceDelivery']['StopMonitoringDelivery']['MonitoredStopVisit']))
+            return(bus_stop_ref, bus_stop_direction)
 
-
-
-        for bus_stop in values['ServiceDelivery']['StopMonitoringDelivery']['MonitoredStopVisit']:
-           print(bus_stop['MonitoredVehicleJourney']['LineRef'], 
-           bus_stop['MonitoredVehicleJourney']['MonitoredCall']['StopPointName'],
-           bus_stop['MonitoredVehicleJourney']['MonitoredCall']['ExpectedArrivalTime'])
-
-
-
-
-
-
+        #for bus_stop in values['ServiceDelivery']['StopMonitoringDelivery']['MonitoredStopVisit']:
+        #   print(bus_stop['MonitoredVehicleJourney']['LineRef'], 
+        #   bus_stop['MonitoredVehicleJourney']['MonitoredCall']['StopPointName'],
+        #   bus_stop['MonitoredVehicleJourney']['MonitoredCall']['ExpectedArrivalTime'])
         #print(values['ServiceDelivery']['StopMonitoringDelivery']['MonitoredStopVisit'][0]['MonitoredVehicleJourney'])
-
-
-        #def getTargetIds(jsonData):
-            #data = json.loads(jsonData)
-            #for dest in data['to']['data']:
-            #print("to_id:", dest.get('id', 'null'))
-
-
 def main():
     get_bus_data().get_data_from_api()
 
