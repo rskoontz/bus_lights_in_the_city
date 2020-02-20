@@ -2,7 +2,6 @@
 
 import json
 import requests
-import urllib
 
 class get_bus_data(object):
 
